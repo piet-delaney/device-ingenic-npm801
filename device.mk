@@ -29,7 +29,8 @@ PRODUCT_PACKAGES := \
     mke2fs          \
     mke2fs_host     \
     e2fsck          \
-    e2fsck_host
+    e2fsck_host     \
+    setup_fs
 
 PRODUCT_PACKAGES += \
     hwcomposer.xb4780    \
@@ -68,8 +69,10 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/config/ueventd.board.rc:root/ueventd.$(TARGET_BOARD_NAME).rc                \
     $(LOCAL_PATH)/config/bt_addr:system/etc/firmware/bcm4330/bt_addr
 
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/config/disk_preparing.sh:system/etc/disk_preparing.sh                       
+#
+# Using the default init.rc file, but this copy shouldn't be needed here.
+#
+PRODUCT_COPY_FILES += system/core/rootdir/init.rc:root/init.rc
 
 # Media Codecs List
 PRODUCT_COPY_FILES += \
