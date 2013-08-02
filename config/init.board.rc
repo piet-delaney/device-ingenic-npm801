@@ -41,7 +41,7 @@ on init
 
     mkdir /storage/sdcard1 0400 system system
 
-# on fs
+on fs
     mount ext4 /dev/block/ndsystem /system
     mount_all /fstab.npm801
     setprop ro.crypto.fuse_sdcard true
