@@ -1,3 +1,6 @@
+#
+# $TOP/device/ingenic/npm801/config/init.board.rc
+#
 on init
     write /dev/nand_char "CMD_INSTALL_PARTITION:ALL"
 
@@ -38,12 +41,8 @@ on init
     mkdir /storage/sdcard1 0400 system system
 
 on fs
+    # Why can't we move /system to fstab.board?
     mount ext4 /dev/block/ndsystem /system
-    #write /proc/exec /system/bin/sh:/system/etc/disk_preparing.sh
-    # create /data and /cache filesystem if necessary
-    chmod 0755 /system/etc/disk_preparing.sh
-    class_start ingenic
-    wait /dev/disk_preparing_done 100
     mount_all /fstab.npm801
     setprop ro.crypto.fuse_sdcard true
 
@@ -134,8 +133,21 @@ on boot
 #    setprop ro.com.google.locationfeatures 1
 
 # create /data and /cache filesystems if necessary
-service disk_preparing /system/etc/disk_preparing.sh
-    class ingenic
+# service disk_preparing /system/etc/disk_preparing.sh
+#    class ingenic
+#    oneshot
+
+# Create /data and /cache filesystems if necessary.
+# A failed FS check will cause init to run this service.
+# /dev/block/nddata is /data, /dev/block/ndcache is /cache.
+# NOTE: '/dev/block' is prefixed to args; can't be provided
+#       to the /system/bin/setup_fs cmd. See:
+#            $TOP/system/extras/ext4_utils/setup_fs.c
+#
+service setup_fs /system/bin/setup_fs nddata ndcache
+    class core
+    user root
+    group root
     oneshot
 
 # virtual sdcard daemon running as media_rw (1023)
